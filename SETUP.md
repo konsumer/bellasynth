@@ -6,7 +6,7 @@ Once you can ssh into it:
 sudo apt update
 sudo apt upgrade
 sudo apt install -y i2c-tools git python3-pip python3-setuptools libgpiod-dev python3-libgpiod puredata
-sudo pip3 install --break-system-packages pygame RPi.GPIO adafruit-blinka
+sudo pip3 install --break-system-packages pygame RPi.GPIO adafruit-blinka oscpy
 
 sudo raspi-config nonint do_i2c 0
 sudo raspi-config nonint do_spi 0
