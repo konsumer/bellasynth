@@ -47,7 +47,7 @@ sudo puredata -rt ~/pd/MAIN.pd &
 
 ## samba
 
-I added a simple config to `etc/samba/smb.conf`:
+This adds windows networked file access. I added a simple config to `etc/samba/smb.conf`:
 
 ```
 # Global parameters
@@ -77,7 +77,8 @@ I added a simple config to `etc/samba/smb.conf`:
 ```
 
 
-## more
+## gadget mode
 
-- If you want gadget-mode (USB port acts as a network interface) see [this](https://www.hardill.me.uk/wordpress/2019/11/02/pi4-usb-c-gadget/)
+This makes it so it acts as a USB network device when you plug it into a computer. You can find good instructions [here](https://www.hardill.me.uk/wordpress/2019/11/02/pi4-usb-c-gadget/).
+
 
