@@ -5,8 +5,8 @@ Once you can ssh into it:
 ```sh
 sudo apt update
 sudo apt upgrade
-sudo apt install -y i2c-tools git python3-pip python3-setuptools libgpiod-dev python3-libgpiod puredata automake autoconf libtool libasound2-dev libjack-dev fftw-dev libasio-dev libportmidi-dev
-sudo pip3 install --break-system-packages pygame RPi.GPIO adafruit-blinka oscpy
+sudo apt install -y i2c-tools git python3-pip python3-setuptools libgpiod-dev python3-libgpiod puredata
+sudo pip3 install --break-system-packages pygame RPi.GPIO adafruit-blinka
 
 sudo raspi-config nonint do_i2c 0
 sudo raspi-config nonint do_spi 0
@@ -29,27 +29,10 @@ And lots of LADSPA plugins (use with `plugin~`):
 sudo apt install -y ladspalist amb-plugins autotalent blepvco blop bs2b-ladspa cmt dpf-plugins-ladspa fil-plugins guitarix-ladspa invada-studio-plugins-ladspa lsp-plugins-ladspa mcp-plugins omins rev-plugins rubberband-ladspa ste-plugins swh-plugins tap-plugins vco-plugins vlevel wah-plugins zam-plugins
 ```
 
-For the frontend, I did this:
+for VNC:
 
 ```
-# install nodejs 20
-sudo apt install -y ca-certificates curl gnupg
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
-NODE_MAJOR=20
-echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-sudo apt update
-sudo apt install nodejs
-
-# build the forked puredata
-git clone --recursive https://github.com/umlaeute/pure-data.git puredata-uifork
-cd puredata-uifork
-git checkout feature/1695/draft-1
-autoupdate
-./autogen.sh
-./configure --enable-jack --enable-alsa --enable-fftw --enable-portmidi --enable-asio
-make
-
-
-# get webui
-git clone https://github.com/BelaPlatform/pure-data-web-GUI.git
+sudo apt install -y lightdm fluxbox
 ```
+
+Now, under `sudo raspi-config`, choose "Interface Options", "VNC", "Yes"
