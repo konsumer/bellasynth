@@ -45,6 +45,38 @@ Now, edit `~/.fluxbox/startup` and add this before last `exec`:
 sudo puredata -rt ~/pd/MAIN.pd &
 ```
 
+## samba
+
+I added a simple config to `etc/samba/smb.conf`:
+
+```
+# Global parameters
+[global]
+  dns proxy = No
+  guest account = pi
+  log file = /var/log/samba/log.%m
+  map to guest = Bad Password
+  max log size = 1000
+  panic action = /usr/share/samba/panic-action %d
+  passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+  passwd program = /usr/bin/passwd %u
+  security = USER
+  server role = standalone server
+  server string = %h server (Samba, Raspberry OS)
+  workgroup = NULL
+  idmap config * : backend = tdb
+
+
+[pi]
+  force create mode = 0660
+  force directory mode = 0770
+  guest ok = Yes
+  guest only = Yes
+  path = /home/pi
+  read only = No
+```
+
+
 ## more
 
 - If you want gadget-mode (USB port acts as a network interface) see [this](https://www.hardill.me.uk/wordpress/2019/11/02/pi4-usb-c-gadget/)
