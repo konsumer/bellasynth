@@ -33,7 +33,6 @@ class HardwareUi(Thread):
       self.m5e.set_encoder_value(i, 0)
       self.pd.send_message("/rot", [i, self.rotaries[i]])
       self.pd.send_message("/btn", [i, self.buttons[i]])
-    
 
   def run(self):
     while True:
