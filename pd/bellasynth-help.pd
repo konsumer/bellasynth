@@ -1,4 +1,4 @@
-#N canvas 2399 332 581 503 12;
+#N canvas 786 48 812 587 12;
 #X obj 15 281 route 0 1 2 3 4 5 6 7;
 #X obj 219 277 route 0 1 2 3 4 5 6 7;
 #X obj 394 277 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
@@ -32,7 +32,17 @@
 #X text 370 164 black graph at 0x0 - 128x64;
 #X obj 132 201 bellasynth;
 #X obj 300 212 print unkown_python_message;
-#X text 231 357 This interacts with hardware UI. You have: - 8 rotary-encoders - 8 buttons - 8 RGB LEDs - a single toggle switch - a B&W OLED screen (128x64);
+#X text 231 357 This interacts with hardware UI.;
+#X text 229 381 You have:;
+#X text 239 401 - 8 rotary-encoders;
+#X text 239 419 - 8 buttons;
+#X text 238 436 - 8 RGB LEDs;
+#X text 237 453 - a single toggle switch;
+#X text 237 469 - a B&W OLED screen (128x64);
+#X text 509 236 In order to use it \,;
+#X text 502 252 you will need the UI (python);
+#X text 501 269 server running \, or this emulator:;
+#X obj 509 302 bellasynth-emulator;
 #X connect 0 0 11 0;
 #X connect 0 1 12 0;
 #X connect 0 2 13 0;
