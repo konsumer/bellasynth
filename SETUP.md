@@ -82,3 +82,24 @@ This adds windows networked file access. I added a simple config to `etc/samba/s
 This makes it so it acts as a USB network device when you plug it into a computer. You can find good instructions [here](https://www.hardill.me.uk/wordpress/2019/11/02/pi4-usb-c-gadget/).
 
 
+## python
+
+The firmware needs some stuff:
+
+```
+sudo pip3 install --break-system-packages adafruit-circuitpython-ssd1306 pillow python-osc 
+```
+
+
+## todo
+
+- [midi auto-connect](https://github.com/BlokasLabs/amidiauto)
+- start pd with no gui early, if in gadget-mode, run x/vnc/pd-gui (and samba, if using that)
+- MTP in gadget-mode (so no samba needed)
+- MIDI in gadget-mode
+- automate bluetooth pairing for select devices
+- OLED splash screen 
+- look through [pisound script](https://github.com/BlokasLabs/pisound) for anything else that is useful
+- CLI menus with [whiptail](https://whiptail.readthedocs.io/en/latest/example.html)?
+- restart services on change: puredata, python
+- web VNC client

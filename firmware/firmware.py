@@ -4,10 +4,20 @@ from pythonosc import udp_client
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import ThreadingOSCUDPServer
 import socket
+from threading import Thread
 from M58Encoder import M58Encoder
 import board
 import busio
-from threading import Thread
+import adafruit_ssd1306
+from PIL import Image, ImageDraw, ImageFont
+
+DO_8ENCODER=True
+DO_4ENCODER=False
+DO_OLED=False
+
+# patch settings for my purposes
+socket.setdefaulttimeout(60)
+ThreadingOSCUDPServer.allow_reuse_address = True
 
 class BiDirectionalClient(udp_client.SimpleUDPClient):
   def __init__(self, address: str, port: int, allow_broadcast: bool = False) -> None:
@@ -22,51 +32,84 @@ class HardwareUi(Thread):
   def __init__(self, pd):
     Thread.__init__(self)
     self.pd = pd
-    self.switch = self.m5e.get_switch_value()
-    self.rotaries = [0,0,0,0,0,0,0,0]
-    self.buttons = [0,0,0,0,0,0,0,0]
     bus = busio.I2C(board.SCL, board.SDA)
-    self.m5e = M58Encoder(bus)
-    print(f"version: {self.m5e.get_firmware_version()} - 0x{self.m5e.get_address():02x}")
-    self.pd.send_message("/sw", self.switch)
-    for i in range(8):
-      self.m5e.set_encoder_value(i, 0)
-      self.pd.send_message("/rot", [i, self.rotaries[i]])
-      self.pd.send_message("/btn", [i, self.buttons[i]])
+    if DO_OLED:
+      self.oled = adafruit_ssd1306.SSD1306_I2C(128, 64, bus, addr=0x3c)
+      self.screen = Image.new("1", (self.oled.width, self.oled.height))
+      self.draw = ImageDraw.Draw(self.screen)
+    if DO_8ENCODER:
+      self.rotaries = [0,0,0,0,0,0,0,0]
+      self.buttons = [0,0,0,0,0,0,0,0]
+      self.m5e = M58Encoder(bus)
+      print(f"version: {self.m5e.get_firmware_version()} - 0x{self.m5e.get_address():02x}")
+      self.switch = self.m5e.get_switch_value()
+      self.pd.send_message("/sw", self.switch)
+      for i in range(8):
+        self.m5e.set_encoder_value(i, 0)
+        self.pd.send_message("/rot", [i, self.rotaries[i]])
+        self.pd.send_message("/btn", [i, self.buttons[i]])
 
   def run(self):
     while True:
-      old = self.switch
-      self.switch =  self.m5e.get_switch_value()
-      if self.switch != old:
-        self.pd.send_message("/sw", self.switch)
-      for i in range(8):
-        old = self.rotaries[i]
-        self.rotaries[i] = self.m5e.get_encoder_value(i) % 255
-        if self.rotaries[i] != old:
-          self.pd.send_message("/rot", [i, self.rotaries[i]])
-        old = self.buttons[i]
-        if self.m5e.is_button_down(i):
-          self.buttons[i] = 1
-        else:
-          self.buttons[i] = 0
-        if self.buttons[i] != old:
-          self.pd.send_message("/btn", [i, self.buttons[i]])
+      if DO_OLED:
+        self.oled.image(self.screen)
+        self.oled.show()
+      if DO_8ENCODER:
+        old = self.switch
+        self.switch =  self.m5e.get_switch_value()
+        if self.switch != old:
+          self.pd.send_message("/sw", self.switch)
+        for i in range(8):
+          old = self.rotaries[i]
+          self.rotaries[i] = self.m5e.get_encoder_value(i) % 255
+          if self.rotaries[i] != old:
+            self.pd.send_message("/rot", [i, self.rotaries[i]])
+          old = self.buttons[i]
+          if self.m5e.is_button_down(i):
+            self.buttons[i] = 1
+          else:
+            self.buttons[i] = 0
+          if self.buttons[i] != old:
+            self.pd.send_message("/btn", [i, self.buttons[i]])
 
   def rgb(self, index,  r, g, b):
-    self.m5e.set_led_color_rgb(index, r, g, b)
+    if (DO_4ENCODER and index > 3) or (DO_8ENCODER and index > 7):
+      print(f'rgb: {index} too high')
+    else:
+      if DO_8ENCODER:
+        self.m5e.set_led_color_rgb(index, r, g, b)
+      else:
+        print(f'rgb {index}: {r}, {g}, {b}')
 
   def hsv(self, index, h, s, v):
-    self.m5e.set_led_color_hsv(index, h, s, v)
+    if (DO_4ENCODER and index > 3) or (DO_8ENCODER and index > 7):
+      print(f'hsv: {index} too high')
+    else:
+      if DO_8ENCODER:
+        self.m5e.set_led_color_hsv(index, h, s, v)
+      else:
+        print(f'hsv {index}: {h}, {s}, {v}')
 
   def rot(self, index, value):
-    self.m5e.set_encoder_value(index, value)
+    if (DO_4ENCODER and index > 3) or (DO_8ENCODER and index > 7):
+      print(f'rot: {index} too high')
+    else:
+      if DO_8ENCODER:
+        self.m5e.set_encoder_value(index, value)
+      else:
+        print(f'rot {index} ({color}): {value} ')
 
   def text(self, color, x, y, text):
-    print(f'text ({color}): {x}x{y} {text}')
+    if DO_OLED:
+      self.draw.text((x,y), text, fill=color)
+    else:
+      print(f'text ({color}) {x}x{y}: {text}')
 
   def rect(self, color, x, y, w, h):
-    print(f'rect ({color}): {x}x{y} - {w}x{h}')
+    if DO_OLED:
+      self.draw.rectangle((x, y, w, f), fill=color)
+    else:
+      print(f'rect ({color}): {x}x{y} - {w}x{h}')
 
   def graph(self, color, x, y, w, h, data):
     print(f"graph ({color}): {x}x{y} - {w}x{h} - {nums}")
@@ -107,6 +150,6 @@ if __name__ == '__main__':
   dispatcher.map("/graph", h_graph)
   dispatcher.set_default_handler(h_default)
 
-  ThreadingOSCUDPServer.allow_reuse_address = True
   server = ThreadingOSCUDPServer((client.address, client.client_port), dispatcher)
   server.serve_forever()
+  
