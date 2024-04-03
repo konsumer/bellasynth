@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 
+DO_8ENCODER=True
+DO_4ENCODER=False
+DO_OLED=False
+
 from pythonosc import udp_client
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import ThreadingOSCUDPServer
 import socket
 from threading import Thread
-from M58Encoder import M58Encoder
 import board
 import busio
-import adafruit_ssd1306
-from PIL import Image, ImageDraw, ImageFont
 
-DO_8ENCODER=True
-DO_4ENCODER=False
-DO_OLED=False
+if DO_8ENCODER:
+  from M58Encoder import M58Encoder
+if DO_OLED:
+  import adafruit_ssd1306
+  from PIL import Image, ImageDraw, ImageFont
 
 # patch settings for my purposes
 socket.setdefaulttimeout(60)
@@ -152,4 +155,3 @@ if __name__ == '__main__':
 
   server = ThreadingOSCUDPServer((client.address, client.client_port), dispatcher)
   server.serve_forever()
-  
