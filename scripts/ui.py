@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 
+DO_8ENCODER=True
+DO_4ENCODER=False
+DO_OLED=False
+
 from pythonosc import udp_client
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import ThreadingOSCUDPServer
 import socket
 from threading import Thread
-from M58Encoder import M58Encoder
-import board
-import busio
-import adafruit_ssd1306
-from PIL import Image, ImageDraw, ImageFont
 
-DO_8ENCODER=True
-DO_4ENCODER=False
-DO_OLED=False
+if DO_8ENCODER or DO_4ENCODER or DO_OLED:
+  import board
+  import busio
+if DO_8ENCODER:
+  from M58Encoder import M58Encoder
+if DO_OLED:
+  import adafruit_ssd1306
+  from PIL import Image, ImageDraw, ImageFont
 
 # patch settings for my purposes
 socket.setdefaulttimeout(60)
@@ -32,11 +36,16 @@ class HardwareUi(Thread):
   def __init__(self, pd):
     Thread.__init__(self)
     self.pd = pd
-    bus = busio.I2C(board.SCL, board.SDA)
+    if DO_8ENCODER or DO_4ENCODER or DO_OLED:
+      bus = busio.I2C(board.SCL, board.SDA)
     if DO_OLED:
       self.oled = adafruit_ssd1306.SSD1306_I2C(128, 64, bus, addr=0x3c)
       self.screen = Image.new("1", (self.oled.width, self.oled.height))
       self.draw = ImageDraw.Draw(self.screen)
+    if DO_4ENCODER:
+      self.rotaries = [0,0,0,0]
+      self.buttons = [0,0,0,0,0]
+      # TODO: similar stuff to 8encoder
     if DO_8ENCODER:
       self.rotaries = [0,0,0,0,0,0,0,0]
       self.buttons = [0,0,0,0,0,0,0,0]
@@ -54,6 +63,9 @@ class HardwareUi(Thread):
       if DO_OLED:
         self.oled.image(self.screen)
         self.oled.show()
+      if DO_4ENCODER:
+        # TODO: similar stuff to 8encoder
+        pass
       if DO_8ENCODER:
         old = self.switch
         self.switch =  self.m5e.get_switch_value()
