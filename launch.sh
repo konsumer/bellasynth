@@ -43,7 +43,11 @@ start_puredata(){
 	sleep 0.3
 	flash_leds 1
 
+	python3 /usr/local/bellasynth/scripts/ui.py &
+	UI_PID=$!
+
 	wait_process $PD_PID
+	wait_process $UI_PID
 }
 
 
@@ -54,5 +58,6 @@ start_puredata(){
 	aconnect "pisound-ctl" "Pure Data";
 	aconnect -d "Pure Data:1" "pisound-ctl"
 ) &
+
 
 start_puredata "$PATCH" $@

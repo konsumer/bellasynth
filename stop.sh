@@ -23,5 +23,6 @@
 . /usr/local/pisound/scripts/common/stop_puredata.sh
 
 stop_puredata
+killall -9 python3
 
 flash_leds 10
