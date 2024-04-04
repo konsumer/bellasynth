@@ -8,7 +8,7 @@
 #
 
 if [ -z "$PUREDATA_PATCHES_DIR" ]; then
-  PUREDATA_PATCHES_DIR=/usr/local/bellasynth/pd/patches/
+  PUREDATA_PATCHES_DIR=/usr/local/patchbox-modules/imported/bellasynth/pd/patches/
 fi
 
 get_pd_entry() {

@@ -33,7 +33,7 @@ start_puredata(){
 	shift
 
 	log "Launching Pure Data."
-	cd "$PATCH_DIR" && puredata -path /usr/local/bellasynth/pd/lib/ -stderr $NO_GUI -send ";pd dsp 1" "$PATCH" $@ &
+	cd "$PATCH_DIR" && puredata -path /usr/local/patchbox-modules/imported/bellasynth/pd/lib/ -stderr $NO_GUI -send ";pd dsp 1" "$PATCH" $@ &
 	PD_PID=$!
 
 	log "Pure Data started!"
@@ -43,7 +43,7 @@ start_puredata(){
 	sleep 0.3
 	flash_leds 1
 
-	python3 /usr/local/bellasynth/scripts/ui.py &
+	python3 /usr/local/patchbox-modules/imported/bellasynth/scripts/ui.py &
 	UI_PID=$!
 
 	wait_process $PD_PID
