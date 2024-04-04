@@ -94,7 +94,7 @@ sudo pip3 install --break-system-packages adafruit-circuitpython-ssd1306 pillow 
 ## todo
 
 - [midi auto-connect](https://github.com/BlokasLabs/amidiauto)
-- start pd with no gui early, if in gadget-mode, run x/vnc/pd-gui (and samba, if using that)
+- start pd with no gui early, if in gadget-mode, run Xvnc/fluxbox/pd-gui (and samba, if using that)
 - MTP in gadget-mode (so no samba needed)
 - MIDI in gadget-mode
 - automate bluetooth pairing for select devices
@@ -103,3 +103,4 @@ sudo pip3 install --break-system-packages adafruit-circuitpython-ssd1306 pillow 
 - CLI menus with [whiptail](https://whiptail.readthedocs.io/en/latest/example.html)?
 - restart services on change: puredata, python
 - web VNC client
+- [this](https://github.com/larsks/systemd-usb-gadget) is a nicer gadget setup
